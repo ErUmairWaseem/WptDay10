@@ -28,8 +28,8 @@ async function readRecord() {
   console.log(list);
 
   await client.close();
+  return list ;
 }
-
 async function main(){
   let jsonDocument = {
   message:"Hello guys", 
@@ -37,8 +37,8 @@ async function main(){
   from:"Umair"
 };
 
- readRecord();
-
+ let list = await readRecord();
+console.log(list);
 }
 main();
 
