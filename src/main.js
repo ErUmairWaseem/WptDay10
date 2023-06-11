@@ -1,19 +1,50 @@
-
-//Express JS
-import  express, { application }  from "express";
+import {MongoClient} from "mongodb";
+import  express, { application, request }  from "express";
 const app = express();
 
 
 //if you want sent some message 
-function my(req , res){
-   res.send("Hello...!!");
+async function main(req , res){
+  const uri = "mongodb://127.0.0.1:27017"
+  const client = new MongoClient(uri);
+
+  //get the DB
+  const db = client.db("umeshdb");
+  const messageCollection = db.collection("message")
+
+  //write a data and store in inputdocument
+  let message = req.query.message;
+  let inputDocument = {message: message};
+  
+
+  //add message
+  await messageCollection.insertOne(inputDocument);
+
+  await client.close();
+
+  //return statement
+  res.send("Record added");
 }
-app.get("/my",my);
 
+async function findAllMessage(req, res) {
+  const uri = "mongodb://127.0.0.1:27017"
+  const client = new MongoClient(uri);
 
-app.get("/main",(req, res) => {
-  res.send("Hello Callback...!");
-})
+  //get the DB
+  const db = client.db("umeshdb");
+  const messageCollection = db.collection("message");
+
+  let list = await messageCollection.find().toArray();
+
+  await client.close();
+
+  res.send(list);
+
+}
+
+app.get("/main",main);
+app.get("/find",findAllMessage);
+
 
 app.listen(4000);
 
